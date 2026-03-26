@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<title>貓糧推薦 · 香港版</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+TC:wght@400;600;700&family=Noto+Sans+TC:wght@300;400;500;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+<div class="hd">
+  <div class="hd-row">
+    <svg class="hd-logo" viewBox="0 0 34 34" fill="none">
+      <ellipse cx="17" cy="21" rx="10" ry="9" fill="#E8EEF5" opacity=".9"/>
+      <ellipse cx="8" cy="15" rx="4" ry="5" fill="#E8EEF5" opacity=".8"/>
+      <ellipse cx="26" cy="15" rx="4" ry="5" fill="#E8EEF5" opacity=".8"/>
+      <ellipse cx="13" cy="11" rx="3" ry="3.5" fill="#E8EEF5" opacity=".8"/>
+      <ellipse cx="21" cy="11" rx="3" ry="3.5" fill="#E8EEF5" opacity=".8"/>
+    </svg>
+    <div class="hd-text">
+      <h1>NCST 貓糧推薦</h1>
+      <p>為香港貓主人而設 · 有根據有數據</p>
+    </div>
+    <div class="hd-badge" id="dbBadge">載入中…</div>
+  </div>
+  <nav class="nav">
+    <button class="nav-tab active" id="tab-rec" onclick="gotoView('rec')">
+      <span class="icon">🐾</span>幫我推薦
+    </button>
+    <button class="nav-tab" id="tab-search" onclick="gotoView('search')">
+      <span class="icon">🔍</span>搜尋
+    </button>
+    <button class="nav-tab" id="tab-cmp" onclick="gotoView('cmp')">
+      <span class="icon">⚖️</span>比較
+    </button>
+    <button class="nav-tab" id="tab-know" onclick="gotoView('know')">
+      <span class="icon">📖</span>知識
+    </button>
+  </nav>
+</div>
+
+<div class="main">
+
+<div class="view active" id="view-rec">
+  <div id="rec-form">
+    <div class="sec-title">
+      <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"/></svg>
+      我的貓咪有咩需要？
+    </div>
+    <div class="chips" id="needChips">
+      <button class="chip on" onclick="selNeed(this,'正常健康')">正常健康</button>
+      <button class="chip" onclick="selNeed(this,'腎病護理')">腎病護理</button>
+      <button class="chip" onclick="selNeed(this,'泌尿問題')">泌尿問題</button>
+      <button class="chip" onclick="selNeed(this,'腸胃敏感')">腸胃敏感</button>
+      <button class="chip" onclick="selNeed(this,'減重')">減重</button>
+      <button class="chip" onclick="selNeed(this,'老貓護理')">老貓護理</button>
+      <button class="chip" onclick="selNeed(this,'毛皮健康')">毛皮健康</button>
+    </div>
+    <div class="tip" id="needTip"></div>
+
+    <div class="paw-sep">🐾 貓咪年齡</div>
+    <div class="chips" id="ageChips">
+      <button class="chip on" onclick="selAge(this,'全部')">全部年齡</button>
+      <button class="chip" onclick="selAge(this,'幼貓')">🐱 幼貓 (&lt;1歲)</button>
+      <button class="chip" onclick="selAge(this,'成年貓')">🐈 成年貓 (1-7歲)</button>
+      <button class="chip" onclick="selAge(this,'老貓')">😸 老貓 (7歲+)</button>
+    </div>
+    <div class="tip" id="ageTip"></div>
+
+    <div class="paw-sep">🐾 糧食種類</div>
+    <div class="chips" id="typeChips">
+      <button class="chip on" onclick="selType(this,'全部')">全部</button>
+      <button class="chip" onclick="selType(this,'乾糧')">🟤 乾糧</button>
+      <button class="chip" onclick="selType(this,'罐頭')">🥫 罐頭</button>
+      <button class="chip" onclick="selType(this,'生肉糧')">🥩 生肉糧</button>
+    </div>
+
+    <button class="btn-primary" onclick="doRecommend()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><circle cx="12" cy="19" r="3"/><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="12" r="2.5"/><circle cx="9" cy="6" r="2"/><circle cx="15" cy="6" r="2"/></svg>
+      查看推薦結果
+    </button>
+  </div>
+
+  <div id="rec-results" style="display:none">
+    <button class="btn-back" onclick="backForm()">← 返回篩選</button>
+    <div class="sec-title" id="recTitle">推薦結果</div>
+    <div id="recList"></div>
+    <button class="btn-more" id="recMore" style="display:none" onclick="loadRecMore()">載入更多</button>
+  </div>
+</div>
+
+<div class="view" id="view-search">
+  <div class="sec-title">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+    全庫搜尋
+  </div>
+  <div class="s-bar">
+    <input class="s-input" id="sInput" placeholder="搜尋品牌或食材…" oninput="triggerSearch()" type="search">
+  </div>
+  <div class="filters">
+    <select class="sel" id="fType" onchange="triggerSearch()">
+      <option value="">所有種類</option>
+      <option value="乾糧">乾糧</option>
+      <option value="罐頭">罐頭</option>
+      <option value="生肉糧">生肉糧</option>
+    </select>
+    <select class="sel" id="fGrain" onchange="triggerSearch()">
+      <option value="">有穀/無穀</option>
+      <option value="1">無穀物</option>
+      <option value="0">含穀物</option>
+    </select>
+    <select class="sel" id="fProt" onchange="triggerSearch()">
+      <option value="">蛋白質</option>
+      <option value="50">≥50%</option>
+      <option value="40">≥40%</option>
+      <option value="35">≥35%</option>
+    </select>
+    <select class="sel" id="fCarb" onchange="triggerSearch()">
+      <option value="">碳水上限</option>
+      <option value="10">≤10%</option>
+      <option value="20">≤20%</option>
+    </select>
+    <select class="sel" id="fMeat" onchange="triggerSearch()">
+      <option value="">肉類偏好</option>
+      <option value="雞">雞肉</option>
+      <option value="魚|三文魚|吞拿魚|鱈魚|鯖魚">魚肉 (海鮮)</option>
+      <option value="牛">牛肉</option>
+      <option value="羊">羊肉</option>
+      <option value="鴨|火雞|鵪鶉">鴨/火雞/禽鳥</option>
+      <option value="兔">兔肉</option>
+      <option value="鹿">鹿肉</option>
+    </select>
+    <select class="sel" id="fSort" onchange="triggerSearch()">
+      <option value="r">評分排序</option>
+      <option value="p">蛋白質↓</option>
+      <option value="c">碳水↑</option>
+    </select>
+  </div>
+  <div class="r-count" id="sCount"><span>共 <strong id="totalCount">…</strong> 款，輸入條件搜尋</span></div>
+  <div id="sList"></div>
+  <button class="btn-more" id="sMore" style="display:none" onclick="loadSMore()">載入更多</button>
+</div>
+
+<div class="view" id="view-cmp">
+  <div class="sec-title">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/></svg>
+    貓糧並排比較
+  </div>
+
+  <div class="cmp-shelf" id="cmpShelf">
+    <div class="cmp-slot" id="slot0" onclick="openCmpPicker(0)">
+      <span style="font-size:1.4rem">➕</span>
+      <span>選擇貓糧 1</span>
+    </div>
+    <div class="cmp-slot" id="slot1" onclick="openCmpPicker(1)">
+      <span style="font-size:1.4rem">➕</span>
+      <span>選擇貓糧 2</span>
+    </div>
+    <div class="cmp-slot" id="slot2" onclick="openCmpPicker(2)">
+      <span style="font-size:1.4rem">➕</span>
+      <span>選擇貓糧 3</span>
+    </div>
+  </div>
+
+  <div id="cmpTable">
+    <div class="cmp-hint">
+      <div class="ico">⚖️</div>
+      <div>請先選擇最少 2 款貓糧進行比較</div>
+      <div style="font-size:.72rem;margin-top:6px;color:var(--subtle)">可在推薦或搜尋結果中加入比較</div>
+    </div>
+  </div>
+</div>
+
+<div class="view" id="view-know">
+  <div class="transition-tool">
+  <div class="sec-title" style="margin-bottom: 5px; font-size: .9rem;">🧭 7天轉糧指南針</div>
+  <p style="font-size: .7rem; color: var(--muted); margin-bottom: 10px;">安全換糧，避免腸胃敏感</p>
+  <div style="display:flex; gap: 10px; margin-bottom: 10px;">
+      <select id="transOld" class="sel" style="flex:1" onchange="updateTransition()">
+          <option value="">選擇舊糧</option>
+      </select>
+      <select id="transNew" class="sel" style="flex:1" onchange="updateTransition()">
+          <option value="">選擇新糧</option>
+      </select>
+  </div>
+  <div id="transSchedule" style="display:none; font-size:.75rem;"></div>
+</div>
+  <div class="sec-title">
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"/><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"/></svg>
+    貓咪飲食知識
+  </div>
+  <div class="k-cats" id="kCatFilter">
+    <button class="k-cat on" onclick="filterKnow(this,'')">全部</button>
+    <button class="k-cat" onclick="filterKnow(this,'貓咪營養知識')">🧪 營養知識</button>
+    <button class="k-cat" onclick="filterKnow(this,'常見疾病')">🏥 常見疾病</button>
+    <button class="k-cat" onclick="filterKnow(this,'腸胃健康')">🌿 腸胃健康</button>
+    <button class="k-cat" onclick="filterKnow(this,'特殊需求')">⭐ 特殊需求</button>
+  </div>
+  <div id="knowList"></div>
+</div>
+
+</div><div class="overlay" id="detailOverlay" onclick="closeDetail(event)">
+  <div class="sheet" id="detailSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hd">
+      <div class="sheet-title" id="dtTitle">成分詳情</div>
+      <div class="sheet-sub" id="dtSub"></div>
+      <button class="sheet-close" onclick="closeDetailBtn()">✕</button>
+    </div>
+    <div class="sheet-body" id="dtBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="knowOverlay" onclick="closeKnow(event)">
+  <div class="sheet" id="knowSheet">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hd">
+      <div class="sheet-title" id="kTitle"></div>
+      <div class="sheet-sub" id="kSub"></div>
+      <button class="sheet-close" onclick="closeKnowBtn()">✕</button>
+    </div>
+    <div class="sheet-body" id="kBody"></div>
+  </div>
+</div>
+
+<div class="overlay" id="pickerOverlay" onclick="closePicker(event)">
+  <div class="sheet" id="pickerSheet" style="max-height:80vh">
+    <div class="sheet-handle"></div>
+    <div class="sheet-hd">
+      <div class="sheet-title">選擇貓糧</div>
+      <div class="sheet-sub">搜尋加入比較列表</div>
+      <button class="sheet-close" onclick="closePickerBtn()">✕</button>
+    </div>
+    <div class="sheet-body">
+      <input class="s-input" id="pickerInput" placeholder="輸入品牌或食材…" oninput="searchPicker()" style="margin-bottom:12px">
+      <div id="pickerList"></div>
+    </div>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script src="data.js"></script>
+
+
+</body>
+</html>
